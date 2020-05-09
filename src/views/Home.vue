@@ -35,7 +35,7 @@
             </v-card-text>
 
             <v-card-actions>
-              <v-btn dark color="orange">
+              <v-btn dark color="orange" @click="gotoPayments(slide.button)">
                 {{slide.button}}
                 <v-icon right>arrow_forward</v-icon>
               </v-btn>
@@ -86,10 +86,22 @@ export default {
       { description: "Ama Project", client: "Mercy Nelson", id: "235" },
       { description: "Ernest Project", client: "Ama Bainson", id: "236" },
       { description: "Quick Fixes", client: "Kwamena Hammond", id: "237" }
-    ]
+    ],
+    selected: ""
   }),
   components: {
     //HelloWorld
+  },
+  methods: {
+    gotoPayments(selected) {
+      this.$router.push({ name: selected });
+    },
+    gotoJobs() {
+      this.$router.push({ name: "Jobs" });
+    },
+    gotoMessages() {
+      this.$router.push({ name: "Message" });
+    }
   }
 };
 </script>

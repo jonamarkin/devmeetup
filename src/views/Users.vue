@@ -2,7 +2,7 @@
   <v-container>
     <v-layout row wrap>
       <div class="text-center mx-auto my-5">
-        <v-dialog v-model="dialog" width="50%">
+        <v-dialog v-model="dialog" width="90%">
           <template v-slot:activator="{ on }">
             <v-btn color="orange lighten-2 ma-auto" dark v-on="on">Add New User</v-btn>
           </template>
@@ -18,8 +18,8 @@
                 <v-row>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="form.first"
-                      :rules="rules.name"
+                      v-model="form.company"
+                      :rules="rules.company"
                       color="purple darken-2"
                       label="Company Name"
                       required
@@ -27,8 +27,8 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="form.last"
-                      :rules="rules.name"
+                      v-model="form.street"
+                      :rules="rules.street"
                       color="blue darken-2"
                       label="Street Address"
                       required
@@ -36,8 +36,8 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="form.last"
-                      :rules="rules.name"
+                      v-model="form.email"
+                      :rules="rules.email"
                       color="blue darken-2"
                       label="Email Address"
                       required
@@ -45,8 +45,8 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="form.last"
-                      :rules="rules.name"
+                      v-model="form.phone"
+                      :rules="rules.phone"
                       color="blue darken-2"
                       label="Phone Number"
                       required
@@ -54,8 +54,8 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="form.last"
-                      :rules="rules.name"
+                      v-model="form.industry"
+                      :rules="rules.industry"
                       color="blue darken-2"
                       label="Industry"
                       required
@@ -64,9 +64,9 @@
 
                   <v-col cols="12" sm="6">
                     <v-select
-                      v-model="form.favoriteAnimal"
-                      :items="animals"
-                      :rules="rules.animal"
+                      v-model="form.selectedRole"
+                      :items="roles"
+                      :rules="rules.role"
                       color="pink"
                       label="Role"
                       required
@@ -74,13 +74,22 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-select
-                      v-model="form.favoriteAnimal"
-                      :items="animals"
-                      :rules="rules.animal"
+                      v-model="form.selectedStatus"
+                      :items="statuses"
+                      :rules="rules.status"
                       color="pink"
                       label="Status"
                       required
                     ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      v-model="form.password"
+                      :rules="rules.password"
+                      color="blue darken-2"
+                      label="Password"
+                      required
+                    ></v-text-field>
                   </v-col>
 
                   <!-- <v-col cols="12">
@@ -199,44 +208,38 @@
 </template>
 
 <script>
-// @ is an alias to /src
-
-export default {
-  name: "Users",
-  components: {
-    //HelloWorld
-  }
-};
-</script>
-
-<style>
-.img-circle {
-  border-radius: 50%;
-}
-</style>
-
-
-
-<script>
 export default {
   data() {
     const defaultForm = Object.freeze({
-      first: "",
-      last: "",
-      bio: "",
-      favoriteAnimal: "",
-      age: null,
-      terms: false
+      company: "",
+      street: "",
+      phone: "",
+      selectedStatus: "",
+      selectedRole: "",
+      password: "",
+      industry: "",
+      email: ""
     });
 
     return {
       form: Object.assign({}, defaultForm),
       rules: {
-        age: [val => val < 10 || `I don't believe you!`],
-        animal: [val => (val || "").length > 0 || "This field is required"],
-        name: [val => (val || "").length > 0 || "This field is required"]
+        company: [val => (val || "").length > 0 || "This field is required"],
+        street: [val => (val || "").length > 0 || "This field is required"],
+        phone: [val => (val || "").length > 0 || "This field is required"],
+        selectedStatus: [
+          val => (val || "").length > 0 || "Please select a status"
+        ],
+        selectedRole: [val => (val || "").length > 0 || "Please select a role"],
+        password: [
+          val =>
+            (val || "").length > 7 || "Password must be at least 8 characters"
+        ],
+        email: [val => (val || "").length > 0 || "Email Address is required"],
+        industry: [val => (val || "").length > 0 || "Industry is required"]
       },
-      animals: ["Dog", "Cat", "Rabbit", "Turtle", "Snake"],
+      statuses: ["Active", "Inactive"],
+      roles: ["Admin", "Client", "Jobs Manager", "Payments Officer"],
       conditions: false,
       content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc.`,
       snackbar: false,
@@ -249,11 +252,31 @@ export default {
   computed: {
     formIsValid() {
       return (
-        this.form.first &&
-        this.form.last &&
-        this.form.favoriteAnimal &&
-        this.form.terms
+        this.form.company &&
+        this.form.street &&
+        this.form.phone &&
+        this.form.selectedRole &&
+        this.form.selectedStatus &&
+        this.form.email &&
+        this.form.industry &&
+        this.form.password
       );
+    },
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
+
+  watch: {
+    user(value) {
+      console.log("A change has occured");
+      console.log({ user: value });
+      if (value !== null && value !== undefined) {
+        console.log("ama is going");
+        this.$router.push({ name: "Jobs" });
+      } else {
+        console.log("The thing is null");
+      }
     }
   },
 
@@ -264,11 +287,26 @@ export default {
     },
     submit() {
       this.snackbar = true;
+      console.log({ company: this.form.company });
+      this.$store.dispatch("registerUser", {
+        email: this.form.email,
+        password: this.form.password
+      });
       this.resetForm();
     }
   }
 };
 </script>
+
+<style>
+.img-circle {
+  border-radius: 50%;
+}
+</style>
+
+
+
+
 
 
 

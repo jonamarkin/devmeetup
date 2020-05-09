@@ -11,6 +11,10 @@
                 </v-flex>
                 <v-flex md6 xs12 class="leftpane">
                   <v-container fluid>
+                    <div v-if="error">
+                      <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
+                    </div>
+
                     <v-layout row wrap class="pa-5 ma-10">
                       <v-flex md12 xs12 class="mt-10">
                         <span class="display-1 font-weight-bold darkmint">Welcome!</span>
@@ -18,22 +22,31 @@
                         <span class="lightGrey">Sign in to continue</span>
                       </v-flex>
                       <v-flex>
-                        <v-text-field
-                          v-model="name"
-                          :rules="nameRules"
-                          label="Name"
-                          required
-                          color="brown"
-                        ></v-text-field>
-                        <v-text-field
-                          v-model="password"
-                          :rules="nameRules"
-                          label="Password"
-                          type="password"
-                          required
-                          color="brown"
-                        ></v-text-field>
-                        <v-btn class="mr-4 white--text" @click="signIn()" color="#f1b74b">Login</v-btn>
+                        <v-form ref="form" @submit.prevent="submit">
+                          <v-text-field
+                            v-model="form.email"
+                            :rules="rules.email"
+                            label="Email"
+                            required
+                            color="brown"
+                          ></v-text-field>
+                          <v-text-field
+                            v-model="form.password"
+                            :rules="rules.password"
+                            label="Password"
+                            type="password"
+                            required
+                            color="brown"
+                          ></v-text-field>
+
+                          <v-btn
+                            class="mr-4 white--text"
+                            color="#f1b74b"
+                            :disabled="!formIsValid"
+                            type="submit"
+                            :loading="loading"
+                          >Login</v-btn>
+                        </v-form>
                       </v-flex>
                     </v-layout>
                   </v-container>
@@ -49,9 +62,73 @@
 
 <script>
 export default {
+  data() {
+    const defaultForm = Object.freeze({
+      password: "",
+      email: ""
+    });
+
+    return {
+      form: Object.assign({}, defaultForm),
+      rules: {
+        password: [val => (val || "").length > 0 || "Password is required"],
+        email: [val => (val || "").length > 0 || "Email Address is required"]
+      },
+
+      conditions: false,
+      content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc.`,
+      snackbar: false,
+      terms: false,
+      defaultForm,
+      dialog: false
+    };
+  },
+
+  computed: {
+    formIsValid() {
+      return this.form.email && this.form.password;
+    },
+    user() {
+      return this.$store.getters.getUser;
+    },
+    loading() {
+      return this.$store.getters.loading;
+    },
+    error() {
+      return this.$store.getters.error;
+    }
+  },
+
+  watch: {
+    user(value) {
+      console.log("A change has occured");
+      console.log({ user: value });
+      if (value !== null && value !== undefined) {
+        console.log("ama is going");
+        this.$router.push({ name: "Home" });
+      } else {
+        console.log("The thing is null");
+      }
+    }
+  },
+
   methods: {
-    signIn() {
-      this.$router.push({ name: "Home" });
+    // resetForm() {
+    //   this.form = Object.assign({}, this.defaultForm);
+    //   this.$refs.form.reset();
+    // },
+    submit() {
+      this.snackbar = true;
+      //console.log({ company: this.form.company });
+      this.$store.dispatch("signIn", {
+        email: this.form.email,
+        password: this.form.password
+      });
+      //this.resetForm();
+    },
+    onDismissed() {
+      console.log("Dismmised alert");
+      this.$store.dispatch("clearError");
     }
   }
 };

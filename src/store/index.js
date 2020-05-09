@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import * as firebase from 'firebase';
 
 Vue.use(Vuex)
 
@@ -82,21 +83,40 @@ export default new Vuex.Store({
                 JobID: "Pending",
             }
         ],
-        loadedUsers: [{
 
-        }],
-        user: {
-            id: "444",
-            companyName: "USG",
-            streetAddress: "Accra",
-            emailAddress: "kwame@yahoo.com",
-            phoneNumber: "0547362101",
-            role: "Admin",
-            status: "Active",
-        },
+        // user: {
+        //     id: "someID",
+        //     companyName: "",
+        //     streetAddress: "Accra",
+        //     emailAddress: "kwame@yahoo.com",
+        //     phoneNumber: "0547362101",
+        //     role: "Admin",
+        //     status: "Active",
+        // },
+        user: null,
+        loading: false,
+        error: null,
     },
     mutations: {
-
+        createJob(state, payload) {
+            state.loadedJobs.push(payload)
+        },
+        addDocument(state, payload) {
+            state.loadedDocuments.push(payload)
+        },
+        setUser(state, payload) {
+            console.log(" Printing payload " + payload)
+            state.user = payload
+        },
+        setLoading(state, payload) {
+            state.loading = payload
+        },
+        setError(state, payload) {
+            state.error = payload
+        },
+        clearError(state) {
+            state.error = null
+        }
     },
     actions: {
         createJob({
@@ -124,6 +144,72 @@ export default new Vuex.Store({
             }
 
             commit('addDocument', Document)
+        },
+
+        registerUser({
+            commit
+        }, payload) {
+            commit('setLoading', true)
+            commit('clearError')
+            console.log("User before registration " + this.user)
+            firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+                .then(
+                    user => {
+                        commit('setLoading', false)
+                        const newUser = {
+                            id: user.user.uid,
+                            companyName: "",
+                            streetAddress: "Accra",
+                            emailAddress: "kwame@yahoo.com",
+                            phoneNumber: "0547362101",
+                            role: "Admin",
+                            status: "Active",
+                        }
+                        commit('setUser', newUser)
+                        console.log(newUser)
+                    }
+
+                )
+                .catch(
+                    error => {
+                        commit('setLoading', false)
+                        commit('setError', error)
+                        console.log("There was an error" + error)
+                    }
+                )
+        },
+
+        signIn({
+            commit
+        }, payload) {
+            commit('setLoading', true)
+            commit('clearError')
+            firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+                .then(user => {
+                    commit('setLoading', false)
+                    const newUser = {
+                        id: user.uid,
+                        companyName: "",
+                        streetAddress: "Accra",
+                        emailAddress: "kwame@yahoo.com",
+                        phoneNumber: "0547362101",
+                        role: "Admin",
+                        status: "Active",
+                    }
+                    commit('setUser', newUser)
+                })
+                .catch(
+                    error => {
+                        commit('setLoading', false)
+                        commit('setError', error)
+                        console.log("There was an error" + error)
+                    }
+                )
+        },
+        clearError({
+            commit
+        }) {
+            commit('clearError')
         }
     },
     modules: {
@@ -137,6 +223,16 @@ export default new Vuex.Store({
         },
         loadedJobs(state) {
             return state.loadedJobs;
+        },
+        getUser(state) {
+            return state.user;
+        },
+        loading(state) {
+            return state.loading
+
+        },
+        error(state) {
+            return state.error
         }
     }
 })
