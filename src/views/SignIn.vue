@@ -1,57 +1,58 @@
 <template>
   <v-app>
     <div class="about">
-      <v-container>
+      <v-container class="logincard">
         <v-col>
-          <v-row align="center" justify="center">
-            <v-card app raised class="mt-5">
-              <v-layout row wrap>
-                <v-flex md6 xs12 class="d-sm-flex hidden-sm-and-down">
-                  <v-img src="@/assets/images/antique-photo.jpg" height="500"></v-img>
-                </v-flex>
-                <v-flex md6 xs12 class="leftpane">
-                  <v-container fluid>
-                    <div v-if="error">
-                      <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
-                    </div>
+          <v-row justify="center">
+            <v-card app raised class="mt-10" height="500">
+              <!-- <v-layout row wrap>
+                -- <v-flex md6 xs12 class="d-sm-flex hidden-sm-and-down">
+                  <v-img src="@/assets/images/person.jpg"></v-img>
+              </v-flex>-->
+              <!-- <v-flex md6 xs12 class="leftpane"> -->
 
-                    <v-layout row wrap class="pa-5 ma-10">
-                      <v-flex md12 xs12 class="mt-10">
-                        <span class="display-1 font-weight-bold darkmint">Welcome!</span>
-                        <br />
-                        <span class="lightGrey">Sign in to continue</span>
-                      </v-flex>
-                      <v-flex>
-                        <v-form ref="form" @submit.prevent="submit">
-                          <v-text-field
-                            v-model="form.email"
-                            :rules="rules.email"
-                            label="Email"
-                            required
-                            color="brown"
-                          ></v-text-field>
-                          <v-text-field
-                            v-model="form.password"
-                            :rules="rules.password"
-                            label="Password"
-                            type="password"
-                            required
-                            color="brown"
-                          ></v-text-field>
+              <v-container fluid>
+                <div v-if="error">
+                  <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
+                </div>
 
-                          <v-btn
-                            class="mr-4 white--text"
-                            color="#f1b74b"
-                            :disabled="!formIsValid"
-                            type="submit"
-                            :loading="loading"
-                          >Login</v-btn>
-                        </v-form>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                </v-flex>
-              </v-layout>
+                <v-layout row wrap class="pa-5 ma-10">
+                  <v-flex md12 xs12 class="mb-10">
+                    <span class="display-1 font-weight-bold darkmint">Welcome!</span>
+                    <br />
+                    <span class="thatcolor">Sign in to continue</span>
+                  </v-flex>
+                  <v-flex>
+                    <v-form ref="form" @submit.prevent="submit">
+                      <v-text-field
+                        v-model="form.email"
+                        :rules="rules.email"
+                        label="Email"
+                        required
+                        color="	#f1b74b"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="form.password"
+                        :rules="rules.password"
+                        label="Password"
+                        type="password"
+                        required
+                        color="	#f1b74b"
+                      ></v-text-field>
+                      <!-- <v-spacer></v-spacer> -->
+                      <v-btn
+                        class="mr-4 white--text mt-10"
+                        color="#f1b74b"
+                        :disabled="!formIsValid"
+                        type="submit"
+                        :loading="loading"
+                      >Login</v-btn>
+                    </v-form>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+              <!-- </v-flex>
+              </v-layout>-->
             </v-card>
           </v-row>
         </v-col>
@@ -137,10 +138,10 @@ export default {
 <style scoped>
 .about {
   /* The image used */
-  background-image: url("../assets/images/antique-photo.jpg") !important;
+  background-image: url("../assets/images/person.jpg") !important;
 
   /* Full height */
-  height: 100vh;
+  height: 100%;
 
   /* Center and scale the image nicely */
   background-position: center;
@@ -149,7 +150,7 @@ export default {
 }
 
 .leftpane {
-  background-color: #cfcdc0;
+  background-color: whitesmoke;
   background-size: cover;
 }
 

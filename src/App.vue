@@ -147,6 +147,10 @@ export default {
 .backg {
   background-color: #137a63;
 }
+
+.Montserrat {
+  font-family: Montserrat;
+}
 </style>
 
 
